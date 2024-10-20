@@ -1,16 +1,28 @@
 syntax = "proto3";
 
+//import "graphql.proto";
+
 option go_package = "./";
 
 service Message{
-    rpc CreateMessage (Request) returns (Response);
+    option (graphql.service) = {
+        host: "localhost:50051"
+        insecure: true
+    };
+
+    rpc GetMessage (Request) returns (Response){
+        option (graphql.schema) = {
+            type: QUERY   // declare as Query
+            name: "hello" // query name
+        };
+    }
 }
 
-message Request{
-    string message = 1;
+message GetRequest{
+    string name = 1 [(graphql.field) = {required: true}];    
 }
 
-message Response{
+message GetResponse{
     string message = 1;
 }
 

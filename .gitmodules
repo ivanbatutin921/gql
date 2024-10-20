@@ -1,3 +1,0 @@
-[submodule "protobuf/grpc-graphql-gateway"]
-	path = protobuf/grpc-graphql-gateway
-	url = https://github.com/ysugimoto/grpc-graphql-gateway.git

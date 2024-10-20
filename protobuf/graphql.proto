@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+// GraphQL типы и поля
+message GraphQLField {
+  string name = 1;
+  string type = 2;
+  bool required = 3;
+}
+
+message GraphQLType {
+  string name = 1;
+  repeated GraphQLField fields = 2;
+}
+
+message GraphQLSchema {
+  repeated GraphQLType types = 1;
+  repeated GraphQLField queries = 2;
+  repeated GraphQLField mutations = 3;
+}
+
+// GraphQL сервис
+service GraphQLService {
+  rpc GetSchema(GraphQLSchema) returns (GraphQLSchema) {}
+}
