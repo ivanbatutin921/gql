@@ -18,7 +18,7 @@ import (
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
 // Requires gRPC-Go v1.32.0 or later.
-const _ = grpc.SupportPackageIsVersion7
+const _ = grpc.SupportPackageIsVersion6
 
 const (
 	Greeter_SayHello_FullMethodName   = "/Greeter/SayHello"
@@ -87,7 +87,7 @@ type UnsafeGreeterServer interface {
 	mustEmbedUnimplementedGreeterServer()
 }
 
-func RegisterGreeterServer(s grpc.ServiceRegistrar, srv GreeterServer) {
+func RegisterGreeterServer(s *grpc.Server, srv GreeterServer) {
 	s.RegisterService(&Greeter_ServiceDesc, srv)
 }
 
