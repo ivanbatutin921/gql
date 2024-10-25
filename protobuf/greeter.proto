@@ -1,0 +1,50 @@
+// greeter.proto
+syntax = "proto3";
+
+import "graphql.proto";
+
+option go_package="./protobuf";
+
+service Greeter {
+  // gRPC service information
+  option (graphql.service) = {
+    host: "localhost:50051"
+    insecure: true
+  };
+
+  rpc SayHello (HelloRequest) returns (HelloReply) {
+    // Here is plugin definition
+    option (graphql.schema) = {
+      type: QUERY   // declare as Query
+      name: "hello" // query name
+    };
+  }
+
+  rpc SayGoodbye (GoodbyeRequest) returns (GoodbyeReply) {
+    // Here is plugin definition
+    option (graphql.schema) = {
+      type: QUERY     // declare as Query
+      name: "goodbye" // query name
+    };
+  }
+}
+
+message HelloRequest {
+  // Below line means the "name" field is required in GraphQL argument
+  string name = 1 [(graphql.field) = {required: true}];
+}
+
+message HelloReply {
+  string message = 1;
+}
+
+message GoodbyeRequest {
+  // Below line means the "name" field is required in GraphQL argument
+  string name = 1 [(graphql.field) = {required: true}];
+}
+
+message GoodbyeReply {
+  string message = 1;
+}
+
+//protoc -I.  --go_out=./greeter --go_opt=paths=source_relative --go-grpc_out=./greeter --go-grpc_opt=paths=source_relative --graphql_out=./greeter --graphql_opt=paths=source_relative greeter.proto
