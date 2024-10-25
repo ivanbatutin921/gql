@@ -11,15 +11,33 @@ import (
 )
 
 var (
-	gql__type_HelloRequest    *graphql.Object      // message HelloRequest in greeter.proto
-	gql__type_HelloReply      *graphql.Object      // message HelloReply in greeter.proto
-	gql__type_GoodbyeRequest  *graphql.Object      // message GoodbyeRequest in greeter.proto
-	gql__type_GoodbyeReply    *graphql.Object      // message GoodbyeReply in greeter.proto
-	gql__input_HelloRequest   *graphql.InputObject // message HelloRequest in greeter.proto
-	gql__input_HelloReply     *graphql.InputObject // message HelloReply in greeter.proto
-	gql__input_GoodbyeRequest *graphql.InputObject // message GoodbyeRequest in greeter.proto
-	gql__input_GoodbyeReply   *graphql.InputObject // message GoodbyeReply in greeter.proto
+	gql__type_MemberReply          *graphql.Object      // message MemberReply in greeter.proto
+	gql__type_HelloRequest         *graphql.Object      // message HelloRequest in greeter.proto
+	gql__type_HelloReply           *graphql.Object      // message HelloReply in greeter.proto
+	gql__type_GoodbyeRequest       *graphql.Object      // message GoodbyeRequest in greeter.proto
+	gql__type_GoodbyeReply         *graphql.Object      // message GoodbyeReply in greeter.proto
+	gql__type_CreateMemberRequest  *graphql.Object      // message CreateMemberRequest in greeter.proto
+	gql__input_MemberReply         *graphql.InputObject // message MemberReply in greeter.proto
+	gql__input_HelloRequest        *graphql.InputObject // message HelloRequest in greeter.proto
+	gql__input_HelloReply          *graphql.InputObject // message HelloReply in greeter.proto
+	gql__input_GoodbyeRequest      *graphql.InputObject // message GoodbyeRequest in greeter.proto
+	gql__input_GoodbyeReply        *graphql.InputObject // message GoodbyeReply in greeter.proto
+	gql__input_CreateMemberRequest *graphql.InputObject // message CreateMemberRequest in greeter.proto
 )
+
+func Gql__type_MemberReply() *graphql.Object {
+	if gql__type_MemberReply == nil {
+		gql__type_MemberReply = graphql.NewObject(graphql.ObjectConfig{
+			Name: "Protobuf_Type_MemberReply",
+			Fields: graphql.Fields{
+				"name": &graphql.Field{
+					Type: graphql.String,
+				},
+			},
+		})
+	}
+	return gql__type_MemberReply
+}
 
 func Gql__type_HelloRequest() *graphql.Object {
 	if gql__type_HelloRequest == nil {
@@ -79,6 +97,34 @@ func Gql__type_GoodbyeReply() *graphql.Object {
 	return gql__type_GoodbyeReply
 }
 
+func Gql__type_CreateMemberRequest() *graphql.Object {
+	if gql__type_CreateMemberRequest == nil {
+		gql__type_CreateMemberRequest = graphql.NewObject(graphql.ObjectConfig{
+			Name: "Protobuf_Type_CreateMemberRequest",
+			Fields: graphql.Fields{
+				"name": &graphql.Field{
+					Type: graphql.String,
+				},
+			},
+		})
+	}
+	return gql__type_CreateMemberRequest
+}
+
+func Gql__input_MemberReply() *graphql.InputObject {
+	if gql__input_MemberReply == nil {
+		gql__input_MemberReply = graphql.NewInputObject(graphql.InputObjectConfig{
+			Name: "Protobuf_Input_MemberReply",
+			Fields: graphql.InputObjectConfigFieldMap{
+				"name": &graphql.InputObjectFieldConfig{
+					Type: graphql.String,
+				},
+			},
+		})
+	}
+	return gql__input_MemberReply
+}
+
 func Gql__input_HelloRequest() *graphql.InputObject {
 	if gql__input_HelloRequest == nil {
 		gql__input_HelloRequest = graphql.NewInputObject(graphql.InputObjectConfig{
@@ -135,6 +181,20 @@ func Gql__input_GoodbyeReply() *graphql.InputObject {
 		})
 	}
 	return gql__input_GoodbyeReply
+}
+
+func Gql__input_CreateMemberRequest() *graphql.InputObject {
+	if gql__input_CreateMemberRequest == nil {
+		gql__input_CreateMemberRequest = graphql.NewInputObject(graphql.InputObjectConfig{
+			Name: "Protobuf_Input_CreateMemberRequest",
+			Fields: graphql.InputObjectConfigFieldMap{
+				"name": &graphql.InputObjectFieldConfig{
+					Type: graphql.String,
+				},
+			},
+		})
+	}
+	return gql__input_CreateMemberRequest
 }
 
 // graphql__resolver_Greeter is a struct for making query, mutation and resolve fields.
@@ -230,7 +290,28 @@ func (x *graphql__resolver_Greeter) GetQueries(conn *grpc.ClientConn) graphql.Fi
 
 // GetMutations returns acceptable graphql.Fields for Mutation.
 func (x *graphql__resolver_Greeter) GetMutations(conn *grpc.ClientConn) graphql.Fields {
-	return graphql.Fields{}
+	return graphql.Fields{
+		"cretemember": &graphql.Field{
+			Type: Gql__type_MemberReply(),
+			Args: graphql.FieldConfigArgument{
+				"name": &graphql.ArgumentConfig{
+					Type: graphql.String,
+				},
+			},
+			Resolve: func(p graphql.ResolveParams) (interface{}, error) {
+				var req CreateMemberRequest
+				if err := runtime.MarshalRequest(p.Args, &req, false); err != nil {
+					return nil, errors.Wrap(err, "Failed to marshal request for cretemember")
+				}
+				client := NewGreeterClient(conn)
+				resp, err := client.CreateMember(p.Context, &req)
+				if err != nil {
+					return nil, errors.Wrap(err, "Failed to call RPC CreateMember")
+				}
+				return resp, nil
+			},
+		},
+	}
 }
 
 // Register package divided graphql handler "without" *grpc.ClientConn,

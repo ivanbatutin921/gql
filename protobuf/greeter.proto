@@ -27,6 +27,14 @@ service Greeter {
       name: "goodbye" // query name
     };
   }
+
+  rpc CreateMember(CreateMemberRequest) returns (MemberReply) {
+    option (graphql.schema) = {
+      type: MUTATION        // declare as Mutation
+      name: "cretemember"   // mutation name
+    };
+  }
+
 }
 
 message HelloRequest {
@@ -47,4 +55,24 @@ message GoodbyeReply {
   string message = 1;
 }
 
+message CreateMemberRequest {
+  string name = 1;
+}
+
+message MemberReply {
+  string name = 1;
+}
+
 //protoc -I.  --go_out=./greeter --go_opt=paths=source_relative --go-grpc_out=./greeter --go-grpc_opt=paths=source_relative --graphql_out=./greeter --graphql_opt=paths=source_relative greeter.proto
+
+// {
+//   goodbye(name: "GraphQL Gateway") {
+//     message
+//   }
+// }
+
+// mutation {
+//   cretemember(name: "John Doe") {
+//       name
+//   }
+// }

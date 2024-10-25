@@ -26,6 +26,12 @@ func (s *Server) SayGoodbye(ctx context.Context, req *greeter.GoodbyeRequest) (*
 	}, nil
 }
 
+func (s *Server) CreateMember(ctx context.Context, req *greeter.CreateMemberRequest) (*greeter.MemberReply, error) {
+	return &greeter.MemberReply{
+		Name: req.GetName(),
+	}, nil
+}
+
 func main() {
 	conn, err := net.Listen("tcp", ":500５1")
 	if err != nil {
