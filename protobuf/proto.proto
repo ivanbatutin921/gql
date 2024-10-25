@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-//import "graphql.proto";
+import "graphql.proto";
 
 option go_package = "./";
 
@@ -10,7 +10,7 @@ service Message{
         insecure: true
     };
 
-    rpc GetMessage (Request) returns (Response){
+    rpc GetMessage (GetRequest) returns (GetResponse){
         option (graphql.schema) = {
             type: QUERY   // declare as Query
             name: "hello" // query name
