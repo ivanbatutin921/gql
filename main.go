@@ -8,6 +8,9 @@ import (
 
 func main() {
 	db.ConnectDB()
+	db.Init()
+	go func(){
+		gateway.RunGQL()
+	}()
 	service.RunGRPC()
-	gateway.RunGQL()
 }

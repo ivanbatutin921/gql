@@ -14,7 +14,7 @@ import (
 
 type Server struct {
 	greeter.UnimplementedGreeterServer
-	db *mongo.DB
+	db *mongo.DB // Поле db для подключения к базе данных
 }
 
 func (s *Server) SayHello(ctx context.Context, req *greeter.HelloRequest) (*greeter.HelloReply, error) {
@@ -30,7 +30,9 @@ func (s *Server) SayGoodbye(ctx context.Context, req *greeter.GoodbyeRequest) (*
 }
 
 func (s *Server) CreateMember(ctx context.Context, req *greeter.CreateMemberRequest) (*greeter.MemberReply, error) {
-	log.Println(s.db)
+	if s.db == nil {
+		return nil, fmt.Errorf("database connection is not initialized")
+	}
 	member := &greeter.CreateMemberRequest{Name: req.GetName()}
 	if err := s.db.InsertMember(member); err != nil {
 		return nil, err
@@ -41,14 +43,16 @@ func (s *Server) CreateMember(ctx context.Context, req *greeter.CreateMemberRequ
 
 func RunGRPC() {
 	log.Println("start gRPC server at :50051")
-	conn, err := net.Listen("tcp", ":500５1")
+	conn, err := net.Listen("tcp", ":50051")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer conn.Close()
 
+	// Инициализируем подключение к базе данных
+	mongo.Init() // Инициализация подключения
+
 	server := grpc.NewServer()
-	greeter.RegisterGreeterServer(server, &Server{})
+	greeter.RegisterGreeterServer(server, &Server{db: mongo.Conn}) // Используем mongo.Conn
 	server.Serve(conn)
 }
-

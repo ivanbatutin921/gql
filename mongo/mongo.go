@@ -18,6 +18,8 @@ type DB struct {
 	client *mongo.Client
 }
 
+var Conn = &DB{}
+
 func ConnectDB() *DB {
 	client, err := mongo.NewClient(options.Client().ApplyURI(configs.EnvMongoURI()))
 	if err != nil {
@@ -38,6 +40,10 @@ func ConnectDB() *DB {
 
 	fmt.Println("Connected to MongoDB")
 	return &DB{client: client}
+}
+
+func Init() {
+	Conn = ConnectDB() // Инициализируем Conn при запуске приложения
 }
 
 // // colHelper возвращает коллекцию по имени
