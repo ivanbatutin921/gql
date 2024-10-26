@@ -1,17 +1,20 @@
-package main
+package service
 
 import (
-    "context"
-    "fmt"
-    "net"
-    "log"
+	"context"
+	"fmt"
+	"log"
+	"net"
 
-    greeter "root/protobuf/greeter"
-    "google.golang.org/grpc"
+	mongo "root/mongo"
+	greeter "root/protobuf/greeter"
+
+	"google.golang.org/grpc"
 )
 
-type Server struct{
+type Server struct {
 	greeter.UnimplementedGreeterServer
+	db *mongo.DB
 }
 
 func (s *Server) SayHello(ctx context.Context, req *greeter.HelloRequest) (*greeter.HelloReply, error) {
@@ -27,12 +30,17 @@ func (s *Server) SayGoodbye(ctx context.Context, req *greeter.GoodbyeRequest) (*
 }
 
 func (s *Server) CreateMember(ctx context.Context, req *greeter.CreateMemberRequest) (*greeter.MemberReply, error) {
-	return &greeter.MemberReply{
-		Name: req.GetName(),
-	}, nil
+	log.Println(s.db)
+	member := &greeter.CreateMemberRequest{Name: req.GetName()}
+	if err := s.db.InsertMember(member); err != nil {
+		return nil, err
+	}
+
+	return &greeter.MemberReply{Name: req.GetName()}, nil
 }
 
-func main() {
+func RunGRPC() {
+	log.Println("start gRPC server at :50051")
 	conn, err := net.Listen("tcp", ":500５1")
 	if err != nil {
 		log.Fatal(err)
@@ -43,3 +51,4 @@ func main() {
 	greeter.RegisterGreeterServer(server, &Server{})
 	server.Serve(conn)
 }
+

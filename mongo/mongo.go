@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"root/configs"
-	"root/graph/model"
+	greeter "root/protobuf/greeter"
 )
 
 type DB struct {
@@ -40,20 +40,32 @@ func ConnectDB() *DB {
 	return &DB{client: client}
 }
 
-// colHelper возвращает коллекцию по имени
-func colHelper(db *DB, collectionName string) *mongo.Collection {
-	return db.client.Database("projectMngt").Collection(collectionName)
-}
+// // colHelper возвращает коллекцию по имени
+// func colHelper(db *DB, collectionName string) *mongo.Collection {
+// 	return db.client.Database("projectMngt").Collection(collectionName)
+// }
 
-// InsertMessage вставляет новое сообщение в коллекцию
-func (db *DB) InsertMessage(message *model.Message) error {
-	collection := colHelper(db, "messages") // Используем colHelper для получения коллекции
+// // InsertMessage вставляет новое сообщение в коллекцию
+// func (db *DB) InsertMessage(message *model.Message) error {
+// 	collection := colHelper(db, "messages") // Используем colHelper для получения коллекции
+
+// 	_, err := collection.InsertOne(context.Background(), bson.M{
+// 		"id":   message.ID,
+// 		"text": message.Text,
+// 	})
+// 	log.Println("вроде норм бд")
+// 	return err
+// }
+
+func (db *DB) InsertMember(member *greeter.CreateMemberRequest) error {
+	collection := db.client.Database("projectMngt").Collection("members") // Укажите имя вашей коллекции
 
 	_, err := collection.InsertOne(context.Background(), bson.M{
-		"id":   message.ID,
-		"text": message.Text,
+		"name": member.Name,
+		// Добавьте другие поля по необходимости
 	})
-	log.Println("вроде норм бд")
-	return err
+	if err != nil {
+		return err
+	}
+	return nil
 }
-
